@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 5;  # Now correctly matches the 5 tests we run
+use Test::More;
 use Getopt::Long::Extended qw(extended_get_options);
 
 # Test help output
@@ -33,3 +33,5 @@ use Getopt::Long::Extended qw(extended_get_options);
     my ($result, $options) = extended_get_options(\@ARGV, $specs);
     pass("Execution continues after help");
 }
+
+done_testing;

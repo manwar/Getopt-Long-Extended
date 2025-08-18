@@ -1,6 +1,7 @@
 use strict;
 use warnings;
-use Test::More tests => 10;
+use Test::More;
+use Test::Warn;
 use Getopt::Long::Extended qw(extended_get_options);
 
 # Test basic nargs functionality
@@ -14,15 +15,16 @@ use Getopt::Long::Extended qw(extended_get_options);
         },
     };
 
-    my ($result, $options) = extended_get_options(\@ARGV, $specs);
-
-    ok($result, 'Parsing succeeded with correct nargs count');
-    is(ref $options->{copy}, 'ARRAY', 'Got array reference');
-    is_deeply(
-        $options->{copy},
-        ['bucket1', 'key1', 'dest1'],
-        'Correct values stored'
-    );
+    warning_is {
+        my ($result, $options) = extended_get_options(\@ARGV, $specs);
+        ok($result, 'Parsing succeeded with correct nargs count');
+        is(ref $options->{copy}, 'ARRAY', 'Got array reference');
+        is_deeply(
+            $options->{copy},
+            ['bucket1', 'key1', 'dest1'],
+            'Correct values stored'
+        );
+    } [], 'No warnings with correct arguments';
 }
 
 # Test insufficient arguments
@@ -32,9 +34,11 @@ use Getopt::Long::Extended qw(extended_get_options);
         'copy' => { nargs => 3 }
     };
 
-    my ($result, $options) = extended_get_options(\@ARGV, $specs);
-
-    ok(!$result, 'Parsing fails with insufficient args');
+    warning_like {
+        my ($result, $options) = extended_get_options(\@ARGV, $specs);
+        ok(!$result, 'Parsing fails with insufficient args');
+    } qr/Incorrect number of arguments for copy \(expected 3\)/,
+    'Got expected warning about missing arguments';
 }
 
 # Test with remaining arguments
@@ -44,19 +48,20 @@ use Getopt::Long::Extended qw(extended_get_options);
         'copy' => { nargs => 3 }
     };
 
-    my ($result, $options, $remaining) = extended_get_options(\@ARGV, $specs);
-
-    ok($result, 'Parsing succeeds with remaining args');
-    is_deeply(
-        $options->{copy},
-        ['b1', 'k1', 'd1'],
-        'Correct values stored'
-    );
-    is_deeply(
-        $remaining,
-        ['extra1', 'extra2'],
-        'Remaining args preserved'
-    );
+    warning_is {
+        my ($result, $options, $remaining) = extended_get_options(\@ARGV, $specs);
+        ok($result, 'Parsing succeeds with remaining args');
+        is_deeply(
+            $options->{copy},
+            ['b1', 'k1', 'd1'],
+            'Correct values stored'
+        );
+        is_deeply(
+            $remaining,
+            ['extra1', 'extra2'],
+            'Remaining args preserved'
+        );
+    } [], 'No warnings with remaining arguments';
 }
 
 # Test nargs=1 (special case)
@@ -66,10 +71,11 @@ use Getopt::Long::Extended qw(extended_get_options);
         'name' => { nargs => 1 }
     };
 
-    my ($result, $options) = extended_get_options(\@ARGV, $specs);
-
-    ok($result, 'Parsing succeeds with nargs=1');
-    is($options->{name}, 'value1', 'Single value stored correctly');
+    warning_is {
+        my ($result, $options) = extended_get_options(\@ARGV, $specs);
+        ok($result, 'Parsing succeeds with nargs=1');
+        is($options->{name}, 'value1', 'Single value stored correctly');
+    } [], 'No warnings with single argument';
 }
 
 # Test required nargs
@@ -82,7 +88,11 @@ use Getopt::Long::Extended qw(extended_get_options);
         }
     };
 
-    my ($result, $options) = extended_get_options(\@ARGV, $specs);
-
-    ok(!$result, 'Parsing fails when required nargs not provided');
+    warning_like {
+        my ($result, $options) = extended_get_options(\@ARGV, $specs);
+        ok(!$result, 'Parsing fails when required nargs not provided');
+    } qr/Missing required option: copy/,
+    'Got expected warning about missing required option';
 }
+
+done_testing;

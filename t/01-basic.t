@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More;
 use Getopt::Long::Extended qw(extended_get_options);
 
 # Test basic single argument
@@ -39,3 +39,5 @@ use Getopt::Long::Extended qw(extended_get_options);
 
     ok($result && !$options->{flag}, 'Optional flag not set');
 }
+
+done_testing;
