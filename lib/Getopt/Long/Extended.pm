@@ -1,8 +1,25 @@
 package Getopt::Long::Extended;
 
+use strict;
+use warnings;
+use Carp;
+use Getopt::Long;
+use Exporter qw(import);
+use List::Util qw(first);
+
+our $VERSION = '0.01';
+
+our @remaining_args = ();
+
+our @EXPORT = qw(extended_get_options remaining_arguments generate_help_text);
+
 =head1 NAME
 
 Getopt::Long::Extended - A declarative and extensible Getopt::Long wrapper
+
+=head1 VERSION
+
+Version 0.01
 
 =head1 SYNOPSIS
 
@@ -46,40 +63,35 @@ Getopt::Long::Extended - A declarative and extensible Getopt::Long wrapper
 
 =head1 DESCRIPTION
 
-Getopt::Long::Extended is a wrapper around L<Getopt::Long> that provides a more declarative, Python-style interface for defining command-line options. It simplifies the process of creating command-line applications by allowing you to define your options in a data structure (a hash reference) rather than through a series of complex variable bindings.
+Getopt::Long::Extended is a wrapper around L<Getopt::Long> that provides a more
+declarative, Python-style interface for defining command-line options. It simplifies
+the process of creating command-line applications by allowing you to define your
+options in a data structure (a hash reference) rather than through a series of
+complex variable bindings.
 
-This module provides an extensible framework for defining options, handling help text, and performing custom validation, while still leveraging the powerful parsing engine of Getopt::Long.
-
-=cut
-
-use strict;
-use warnings;
-use Carp;
-use Getopt::Long;
-use Exporter qw(import);
-use List::Util qw(first);
-
-our $VERSION = '0.01';
-
-our @remaining_args = ();
-
-our @EXPORT = qw(extended_get_options remaining_arguments generate_help_text);
+This module provides an extensible framework for defining options, handling help
+text, and performing custom validation, while still leveraging the powerful parsing
+engine of Getopt::Long.
 
 =head1 FUNCTIONS
 
 =head2 extended_get_options(\@arguments, \%specs)
 
-The primary function of the module. It parses command-line arguments based on a declarative specification.
+The primary function of the module. It parses command-line arguments based on
+a declarative specification.
 
 =over 4
 
 =item * B<@arguments>
 
-A reference to an array of command-line arguments, typically C<\@ARGV>. This array will be modified in place to contain only the remaining (non-option) arguments.
+A reference to an array of command-line arguments, typically C<\@ARGV>.
+
+This array will be modified in place to contain only the remaining (non-option) arguments.
 
 =item * B<%specs>
 
-A hash reference where each key is an option name (e.g., C<"verbose">) and each value is another hash reference containing the option's properties.
+A hash reference where each key is an option name (e.g., C<"verbose">) and each value is
+another hash reference containing the option's properties.
 
 =back
 
@@ -91,11 +103,13 @@ Returns a three-element list:
 
 =item * B<success>
 
-A boolean value (1 or 0) indicating whether parsing was successful and all validation checks passed.
+A boolean value (1 or 0) indicating whether parsing was successful and all validation
+checks passed.
 
 =item * B<options>
 
-A hash reference containing the parsed options. Option names are keys, and their values are the parsed arguments. A special key C<_help_text> is populated if C<--help> is passed.
+A hash reference containing the parsed options. Option names are keys, and their
+values are the parsed arguments. A special key C<_help_text> is populated if C<--help> is passed.
 
 =item * B<remaining>
 
@@ -231,7 +245,10 @@ sub extended_get_options {
 
 =head2 generate_help_text(\%specs)
 
-Generates and returns a formatted help message based on the provided specifications hash. This is the subroutine used internally when a C<--help> argument is detected, but it can also be called directly to generate help text for other purposes.
+Generates and returns a formatted help message based on the provided specifications hash.
+
+This is the subroutine used internally when a C<--help> argument is detected, but it can
+also be called directly to generate help text for other purposes.
 
 =head1 OPTION SPECIFICATIONS
 
@@ -254,11 +271,13 @@ C<store_false>: The option value is set to 0 if present, 1 otherwise.
 
 =item * B<required>
 
-(Optional) A boolean. If set to a true value, an error will be issued if the option is not present on the command line.
+(Optional) A boolean. If set to a true value, an error will be issued if
+the option is not present on the command line.
 
 =item * B<help>
 
-(Optional) A string providing a short description of the option. This text is used by C<generate_help_text>.
+(Optional) A string providing a short description of the option. This text is
+used by C<generate_help_text>.
 
 =item * B<metavar>
 
@@ -291,7 +310,9 @@ sub generate_help_text {
 
 =head2 remaining_arguments()
 
-This function returns the array of arguments that were not recognized as options by the last call to C<extended_get_options>. This is a convenience function that provides access to the same data returned as the third element of the list from C<extended_get_options>.
+This function returns the array of arguments that were not recognized as options
+by the last call to C<extended_get_options>. This is a convenience function that
+provides access to the same data returned as the third element of the list from C<extended_get_options>.
 
 =cut
 
