@@ -16,14 +16,12 @@ use Getopt::Long::Extended qw(extended_get_options);
 
     my ($result, $options) = extended_get_options(\@ARGV, $specs);
 
-    # Verify results - these are 4 tests
     ok($result, 'Help parsing succeeded');
     ok(exists $options->{_help_text}, 'Help text generated');
     like($options->{_help_text}, qr/Test option description/, 'Help text contains description');
     like($options->{_help_text}, qr/TESTARG/, 'Help text contains metavar');
 }
 
-# This is the 5th test
 {
     local @ARGV = ('--help');
     my $specs = {

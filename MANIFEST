@@ -1,0 +1,15 @@
+Changes
+lib/Getopt/Long/Extended.pm
+LICENSE
+Makefile.PL
+MANIFEST
+MANIFEST.SKIP
+README
+t/00-load.t
+t/01-basic.t
+t/02-nargs.t
+t/03-help.t
+t/04-example.t
+t/05-boolean.t
+t/manifest.t
+t/pod.t
